@@ -2,8 +2,8 @@
 ###########
 ## INPUT ##
 ###########
-#setwd("/Users/jorgespa/Documents/Research/DataIntegration/DeadBirds")
-#source("functionssimu.R")
+setwd("/Users/jorgespa/Documents/Research/DataIntegration/DeadBirds")
+source("functionssimu.R")
 
 #Number of species
 nspecies = 4
@@ -20,15 +20,15 @@ nspecies = 4
 
 
 #Input for the simulations
-input <- list(
+input <- {list(
   ecological = list(
     fixed.effect=list(
-      intercept = c(0.8, 0.5, 0.5, 1.2),
-      betacov = c(1.5, -2.12, 4,-0.4)
+      intercept = c(0.8, 2.5, -1.5, 1.2),
+      betacov = c(1.5, -0.12, 2,-0.4)
     ),
     hyperparameters = list(
-      sigma2 = c(2.2, 1.2, 2, 0.1),
-      range = c(3.2, 2.5, 3.2, 0.22)
+      sigma2 = c(0.2, 1.2, 2, 0.1),
+      range = c(1.2, 2.5, 3.2, 0.22)
     )
   ),
   sampling = list(
@@ -59,7 +59,7 @@ input <- list(
     
     
   )
-)
+)}
 
 
 seed= 1036610620
@@ -208,6 +208,7 @@ csdata <- function(nspecies,input,cov,idxs,domain=NULL,seed,plot=list(all=TRUE),
     #environment_list <- as.list(environment())
     #### First thinning stage ##
     #print(length(environment_list))
+    
     firststage <- firstthinning(input)
     
     ## Second thinning stage ##
@@ -310,20 +311,391 @@ csdata <- function(nspecies,input,cov,idxs,domain=NULL,seed,plot=list(all=TRUE),
       
     }
     
-    
-  }
+    }
   else{
     stop("Covariates input should be a list")
   }
+  
+  return(list(trueecological=Eco_PP,firststage=firststage,secondstage=secondstage,thirdstage=thirdstage,
+              species_raster=species_rast))
+  
 }
 #par(mfrow=c(2,2))
-csdata(nspecies=nspecies,input=input,cov=cov,idxs=idxs,seed=seed)
+simulateddata <- csdata(nspecies=nspecies,input=input,cov=cov,idxs=idxs,seed=seed)
 
+inputeco <- {list(
+  ecological = list(
+    fixed.effect=list(
+      intercept = c(0.8, 0.5, 0.5, 1.2),
+      betacov = c(1.5, -2.12, 4,-0.4)
+    ),
+    hyperparameters = list(
+      sigma2 = c(2.2, 1.2, 2, 0.1),
+      range = c(3.2, 2.5, 3.2, 0.22)
+    )
+  ),
+  sampling = list(
+    fixed.effect = list(
+      intercept = c(1.3),
+      betacov = c(-1.5)
+    ),
+    hyperparameters=list(
+      sigma2 = c(0.2),
+      range = c(2.5)
+    )
+  ),
+  detection = list(
+    
+    fixed.effect = list(
+      intercept=c(2,-0.3, 5, 1.2),
+      betacov = c(-2, -0.5, -2.5, 2)
+    )
+  ),
+  
+  misclassification = list(
+    
+    class_prob <- matrix(c(0.9, 0.02, 0.04, 0.04,
+                           0.05, 0.89, 0.04, 0.02,
+                           0.1,0.1, 0.8, 0,
+                           0, 0.05, 0.25, 0.7),
+                         nrow=4, ncol=4, byrow = TRUE)
+    
+    
+  )
+)}
+
+inputsamplingsc1 <- {list(
+  ecological = list(
+    fixed.effect=list(
+      intercept = c(0.8, 2.5, -1.5, 1.2),
+      betacov = c(1.5, -0.12, 2,-0.4)
+    ),
+    hyperparameters = list(
+      sigma2 = c(0.2, 1.2, 2, 0.1),
+      range = c(1.2, 2.5, 3.2, 0.22)
+    )
+  ),
+  sampling = list(
+    fixed.effect = list(
+      intercept = c(1.3),
+      betacov = c(-1.5)
+    ),
+    hyperparameters=list(
+      sigma2 = c(2.2),
+      range = c(4.5)
+    )
+  ),
+  detection = list(
+    
+    fixed.effect = list(
+      intercept=c(2,-0.3, 5, 1.2),
+      betacov = c(-2, -0.5, -2.5, 2)
+    )
+  ),
+  
+  misclassification = list(
+    
+    class_prob <- matrix(c(0.9, 0.02, 0.04, 0.04,
+                           0.05, 0.89, 0.04, 0.02,
+                           0.1,0.1, 0.8, 0,
+                           0, 0.05, 0.25, 0.7),
+                         nrow=4, ncol=4, byrow = TRUE)
+    
+    
+  )
+)}
+
+inputsamplingsc2 <- {list(
+  ecological = list(
+    fixed.effect=list(
+      intercept = c(0.8, 2.5, -1.5, 1.2),
+      betacov = c(1.5, -0.12, 2,-0.4)
+    ),
+    hyperparameters = list(
+      sigma2 = c(0.2, 1.2, 2, 0.1),
+      range = c(1.2, 2.5, 3.2, 0.22)
+    )
+  ),
+  sampling = list(
+    fixed.effect = list(
+      intercept = c(-0.7),
+      betacov = c(-3.5)
+    ),
+    hyperparameters=list(
+      sigma2 = c(0.2),
+      range = c(2.5)
+    )
+  ),
+  detection = list(
+    
+    fixed.effect = list(
+      intercept=c(2,-0.3, 5, 1.2),
+      betacov = c(-2, -0.5, -2.5, 2)
+    )
+  ),
+  
+  misclassification = list(
+    
+    class_prob <- matrix(c(0.9, 0.02, 0.04, 0.04,
+                           0.05, 0.89, 0.04, 0.02,
+                           0.1,0.1, 0.8, 0,
+                           0, 0.05, 0.25, 0.7),
+                         nrow=4, ncol=4, byrow = TRUE)
+    
+    
+  )
+)}
+
+inputsamplingsc3 <- {list(
+  ecological = list(
+    fixed.effect=list(
+      intercept = c(0.8, 2.5, -1.5, 1.2),
+      betacov = c(1.5, -0.12, 2,-0.4)
+    ),
+    hyperparameters = list(
+      sigma2 = c(0.2, 1.2, 2, 0.1),
+      range = c(1.2, 2.5, 3.2, 0.22)
+    )
+  ),
+  sampling = list(
+    fixed.effect = list(
+      intercept = c(3.3),
+      betacov = c(0.5)
+    ),
+    hyperparameters=list(
+      sigma2 = c(0.2),
+      range = c(2.5)
+    )
+  ),
+  detection = list(
+    
+    fixed.effect = list(
+      intercept=c(2,-0.3, 5, 1.2),
+      betacov = c(-2, -0.5, -2.5, 2)
+    )
+  ),
+  
+  misclassification = list(
+    
+    class_prob <- matrix(c(0.9, 0.02, 0.04, 0.04,
+                           0.05, 0.89, 0.04, 0.02,
+                           0.1,0.1, 0.8, 0,
+                           0, 0.05, 0.25, 0.7),
+                         nrow=4, ncol=4, byrow = TRUE)
+    
+    
+  )
+)}
+
+inputdetection <- {list(
+  ecological = list(
+    fixed.effect=list(
+      intercept = c(0.8, 2.5, -1.5, 1.2),
+      betacov = c(1.5, -0.12, 2,-0.4)
+    ),
+    hyperparameters = list(
+      sigma2 = c(0.2, 1.2, 2, 0.1),
+      range = c(1.2, 2.5, 3.2, 0.22)
+    )
+  ),
+  sampling = list(
+    fixed.effect = list(
+      intercept = c(1.3),
+      betacov = c(-1.5)
+    ),
+    hyperparameters=list(
+      sigma2 = c(0.2),
+      range = c(2.5)
+    )
+  ),
+  detection = list(
+    
+    fixed.effect = list(
+      intercept=c(4,-2.3, 7, 1.2),
+      betacov = c(-4, -2.5, -0.5, 2)
+    )
+  ),
+  
+  misclassification = list(
+    
+    class_prob <- matrix(c(0.9, 0.02, 0.04, 0.04,
+                           0.05, 0.89, 0.04, 0.02,
+                           0.1,0.1, 0.8, 0,
+                           0, 0.05, 0.25, 0.7),
+                         nrow=4, ncol=4, byrow = TRUE)
+    
+    
+  )
+)}
+
+inputeco <- {list(
+  ecological = list(
+    fixed.effect=list(
+      intercept = c(0.8, 0.5, 0.5, 1.2),
+      betacov = c(1.5, -2.12, 4,-0.4)
+    ),
+    hyperparameters = list(
+      sigma2 = c(2.2, 1.2, 2, 0.1),
+      range = c(3.2, 2.5, 3.2, 0.22)
+    )
+  ),
+  sampling = list(
+    fixed.effect = list(
+      intercept = c(1.3),
+      betacov = c(-1.5)
+    ),
+    hyperparameters=list(
+      sigma2 = c(0.2),
+      range = c(2.5)
+    )
+  ),
+  detection = list(
+    
+    fixed.effect = list(
+      intercept=c(2,-0.3, 5, 1.2),
+      betacov = c(-2, -0.5, -2.5, 2)
+    )
+  ),
+  
+  misclassification = list(
+    
+    class_prob <- matrix(c(0.9, 0.02, 0.04, 0.04,
+                           0.05, 0.89, 0.04, 0.02,
+                           0.1,0.1, 0.8, 0,
+                           0, 0.05, 0.25, 0.7),
+                         nrow=4, ncol=4, byrow = TRUE)
+    
+    
+  )
+)}
+
+
+input_list <- list(input,inputeco,inputsamplingsc1,inputsamplingsc2,inputsamplingsc3,inputdetection)
+replicates <- 1000
+papertable <- pblapply(input_list,function(x){
+  pblapply(1:replicates, function(z){
+  tmpdata <- csdata(nspecies=nspecies,input=x,cov=cov,idxs=idxs,seed=z,plot=list(ecological=FALSE,detection=FALSE,sampling=FALSE,all=FALSE,classification=FALSE))
+  size_list <- list(n_true = sapply(tmpdata$trueecological,function(y){y$n}),
+                    n_firststage=sapply(tmpdata$firststage$Eco_PPFinal,length),
+                    n_secondstage=sapply(tmpdata$secondstage$Eco_PPFinal_detect,length),
+                    confusion_thirdstage=table(tmpdata$thirdstage$classifications$true_species,tmpdata$thirdstage$classifications$error))
+
+  
+},cl=1)
+},cl=1)
+papertablecopy <- papertable
+papertable <- readRDS("papertable1000reps.rds")
+library(purrr)
+flattable <-flatten(papertable)
+which.review <- which(sapply(flattable,class)=="try-error")
+for(i in 1:length(flattable)){flattable[[i]]$test <- ifelse(i%%1000==0,i/1000,floor(i/1000 + 1))}
+flattable <- flattable[-which.review]
+whichscenario <- sapply(flattable,function(x){x$test})
+table0 <- lapply(flattable, function(x){
+  rbind(x$n_true,x$n_firststage,x$n_secondstage)
+})
+
+deltas <- lapply(table0, function(x){
+  rbind(x[2,]/x[1,]-1,x[3,]/x[2,]-1)
+})
+
+for(i in 1:6){
+  #assign(paste0("deltas_",i),do.call("rbind",deltas[((i-1)*10+1):(i*10)]))
+  assign(paste0("deltas_",i),do.call("rbind",deltas[whichscenario==i]))
+  kind <- rep(c("Sampling","Detection"),nrow(get(paste0("deltas_",i)))/2)
+  #replicate <- rep(1:10,each=2)
+  #assign(paste0("deltas.df_",i),data.frame(kind,replicate,get(paste0("deltas_",i))))
+  assign(paste0("deltas.df_",i),data.frame(kind,get(paste0("deltas_",i))))
+  #assign(paste0("meltdeltas.df_",i),melt(get(paste0("deltas.df_",i)),id.vars = c("kind","replicate")))
+  assign(paste0("meltdeltas.df_",i),melt(get(paste0("deltas.df_",i)),id.vars = c("kind")))
+  assign(paste0("p",i),ggplot(data=get(paste0("meltdeltas.df_",i)))+
+           geom_boxplot(aes(x=as.factor(variable),y=value,color=kind))+
+           theme_bw()+
+           theme(axis.title.x=element_blank(),
+                 axis.title.y=element_blank()
+                 )+
+           ylim(-1,0))
+          
+}
+
+library(ggplot2)
+library(gridExtra)
+library(GGally)
+library(ggpubr)
+figure <- ggarrange(p1,p2,p3,p4,p5,p6,ncol=2,nrow=3,common.legend = T,labels = c("A","B","C","D","E","F"))
+annotate_figure(figure,
+                bottom = text_grob("Species"),
+                left = text_grob("Change (%)", rot = 90)
+)
+#table(simulateddata$thirdstage$classifications$erro,simulateddata$thirdstage$classifications$true_species)
 #Out put an object and plot late on.
 #We can do much more with the object returned.
 
-# The negative should give the probability less than 0.
+### Let's get indicators of each confusion matrix ##
 
-# Identifiability of the model
-#Which parameter values would make the model identifiable and those that won't .
+confmatrices <- lapply(papertable,function(x){lapply(x,function(y){
+  if(class(y)!="try-error"){y$confusion_thirdstage}})}) 
+
+#####
+## species  TP TN FP FN
+##  1
+##  2
+##  3
+formatconfusion <- function(ex1,nspecies){
+data.frame(t(sapply(1:nspecies,function(i){
+ if(!all(dim(ex1)==nspecies)){
+  m1 <- length(setdiff(seq(1,nspecies),as.numeric(colnames(ex1))))
+  m2 <- length(setdiff(seq(1,nspecies),as.numeric(rownames(ex1))))
+  add <- matrix(0,ncol=ncol(ex1),nrow=m2)
+  rownames(add) <- as.character(setdiff(seq(1,nspecies),as.numeric(rownames(ex1))))
+  ex1 <- rbind(ex1,add)
+  ex1 <- ex1[order(as.numeric(rownames(ex1))),]
+  }
+  idx0 <- seq(1,nspecies) ##Initial indexation
+  idx1 <- idx0[-i] ##All the other species
+  TP <- ex1[i,i]
+  TN <- sum(ex1[idx1,idx1])
+  FP <- sum(ex1[idx1,i])
+  FN <- sum(ex1[i,idx1])
+  return(data.frame(species=i,TP=TP,TN=TN,FP=FP,FN=FN))
+})))
+}
+
+summarymatrix <- lapply(confmatrices,function(x){lapply(x,function(y){
+  if(!is.null(y)){
+    
+  misclassmeasures <- formatconfusion(y,nspecies)
+   misclassmeasures$sensitivity <- unlist(misclassmeasures$TP)/(unlist(misclassmeasures$TP)+unlist(misclassmeasures$FN))
+   misclassmeasures$specificity <- unlist(misclassmeasures$TN)/(unlist(misclassmeasures$TN)+unlist(misclassmeasures$FP))
+   return(misclassmeasures)
+    }})}) 
+
+finaltable <- do.call("rbind",lapply(1:length(summarymatrix),function(x){
+  tmp <- do.call("rbind",summarymatrix[[x]])
+  tmp$scenario <- x
+  return(tmp)
+  }))
+
+
+#classification plots
+pp <- list()
+for(i in 1:6){
+pp[[i]]<- finaltable%>%
+  dplyr::filter(scenario==i)%>%
+  dplyr::select(species, sensitivity, specificity, scenario)%>%
+  reshape2::melt(id.vars=c("species","scenario"))%>%
+  tidyr::drop_na()%>%
+  ggplot()+
+  geom_boxplot(aes(x=as.factor(unlist(species)),y=as.numeric(value),color=variable))+
+  theme_bw()+
+  theme(axis.title.x=element_blank(),
+        axis.title.y=element_blank()
+  )+
+  ylim(0,1)
+}
+figure <- ggarrange(pp[[1]],pp[[2]],pp[[3]],pp[[4]],pp[[5]],pp[[6]],ncol=2,nrow=3,common.legend = T,labels = c("A","B","C","D","E","F"))
+annotate_figure(figure,
+                bottom = text_grob("Species"),
+                left = text_grob("Sensitivity and specificity", rot = 90))
+
 
